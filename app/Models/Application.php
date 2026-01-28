@@ -9,6 +9,7 @@ class Application extends Model
     protected $fillable = [
         'company',
         'position',
-        'status'
+        'status',
+        'description',
     ];
 }

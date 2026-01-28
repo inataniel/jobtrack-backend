@@ -14,13 +14,15 @@ class ApplicationController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'company' => 'required|string|max:255',
             'position' => 'required|string|max:255',
-            'status' => 'in:applied,interview,offer,rejected'
+            'status' => 'required|string',
+            'description' => 'nullable|string',
         ]);
 
-        $application = Application::create($request->all());
+        $application = Application::create($validated);
+
         return response()->json($application, 201);
     }
 
