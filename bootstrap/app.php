@@ -11,10 +11,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->validateCsrfTokens(
-            except: ['api/*',] // minden route CSRF-t használ kivéve api
-        );
+        // Itt adhatsz hozzá saját middleware-eket
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        // Itt kezelheted az egyedi hibaüzeneteket
     })->create();
