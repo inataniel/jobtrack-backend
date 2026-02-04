@@ -5,24 +5,29 @@ namespace App\Http\Controllers;
 use App\Models\Application;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use App\Services\ApplicationService;
+
+use App\Http\Requests\StoreApplicationRequest;
+use App\Http\Requests\UpdateApplicationRequest;
 
 class ApplicationController extends Controller
 {
+    public function __construct(
+        private ApplicationService $service
+    ) {}
+
     public function index()
     {
-        return Application::all();
+        return response()->json(
+            $this->service->list()
+        );
     }
 
-    public function store(Request $request)
+    public function store(StoreApplicationRequest $request)
     {
-        $validated = $request->validate([
-            'company' => 'required|string|max:255',
-            'position' => 'required|string|max:255',
-            'status' => 'required|string',
-            'description' => 'nullable|string',
-        ]);
-
-        $application = Application::create($validated);
+        $application = $this->service->create(
+            $request->validated()
+        );
 
         return response()->json($application, 201);
     }
@@ -32,35 +37,29 @@ class ApplicationController extends Controller
         return Application::findOrFail($id);
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateApplicationRequest $request, Application $application)
     {
-        $application = Application::findOrFail($id);
-        $application->update($request->all());
-        return response()->json($application, 200);
+        $updated = $this->service->update(
+        $application,
+        $request->validated()
+        );
+
+        return response()->json($updated);
     }
 
-    public function destroy($id)
+    public function destroy(Application $application)
     {
-        Application::destroy($id);
+        $this->service->delete($application);
+
         return response()->json(null, 204);
     }
 
-    public function destroyAll(): JsonResponse
+    public function destroyAll()
     {
-        try {
-            \App\Models\Application::query()->delete();
+        $this->service->deleteAll();
 
-            return response()->json([
-                'message' => 'All applications deleted'
-            ], 200);
-        } catch (\Throwable $e) {
-            \Log::error('Delete all applications failed', [
-                'exception' => $e,
-            ]);
-
-            return response()->json([
-                'message' => 'Delete failed'
-            ], 500);
-        }
+        return response()->json([
+            'message' => 'All applications deleted'
+        ]);
     }
 }
