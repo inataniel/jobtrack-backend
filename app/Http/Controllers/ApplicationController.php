@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Application;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class ApplicationController extends Controller
 {
@@ -42,5 +43,24 @@ class ApplicationController extends Controller
     {
         Application::destroy($id);
         return response()->json(null, 204);
+    }
+
+    public function destroyAll(): JsonResponse
+    {
+        try {
+            \App\Models\Application::query()->delete();
+
+            return response()->json([
+                'message' => 'All applications deleted'
+            ], 200);
+        } catch (\Throwable $e) {
+            \Log::error('Delete all applications failed', [
+                'exception' => $e,
+            ]);
+
+            return response()->json([
+                'message' => 'Delete failed'
+            ], 500);
+        }
     }
 }
