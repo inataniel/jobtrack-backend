@@ -7,14 +7,19 @@ use Illuminate\Support\Collection;
 
 class ApplicationService
 {
-    public function list(): Collection
+    public function listForUser(int $userId)
     {
-        return Application::orderByDesc('created_at')->get();
+        return Application::where('user_id', $userId)
+            ->orderByDesc('created_at')
+            ->get();
     }
 
-    public function create(array $data): Application
+    public function createForUser(int $userId, array $data)
     {
-        return Application::create($data);
+        return Application::create([
+            ...$data,
+            'user_id' => $userId,
+        ]);
     }
 
     public function update(Application $application, array $data): Application

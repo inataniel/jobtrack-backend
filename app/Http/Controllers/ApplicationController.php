@@ -18,14 +18,19 @@ class ApplicationController extends Controller
 
     public function index()
     {
+        $userId = 1;
+
         return response()->json(
-            $this->service->list()
+            $this->service->listForUser($userId)
         );
     }
 
     public function store(StoreApplicationRequest $request)
     {
-        $application = $this->service->create(
+        $userId = 1;
+
+        $application = $this->service->createForUser(
+            $userId,
             $request->validated()
         );
 
