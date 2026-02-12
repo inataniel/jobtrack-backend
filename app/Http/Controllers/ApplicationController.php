@@ -18,7 +18,7 @@ class ApplicationController extends Controller
 
     public function index()
     {
-        $userId = 1;
+        $userId = auth()->id();
 
         return response()->json(
             $this->service->listForUser($userId)
@@ -27,7 +27,7 @@ class ApplicationController extends Controller
 
     public function store(StoreApplicationRequest $request)
     {
-        $userId = 1;
+        $userId = auth()->id();
 
         $application = $this->service->createForUser(
             $userId,
